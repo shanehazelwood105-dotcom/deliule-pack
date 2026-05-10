@@ -7,3 +7,9 @@
  */
 
 export * from "./healthStatus";
+export * from "./openaiConversation";
+export * from "./openaiConversationInput";
+export * from "./openaiConversationWithMessages";
+export * from "./openaiError";
+export * from "./openaiMessage";
+export * from "./openaiMessageInput";
