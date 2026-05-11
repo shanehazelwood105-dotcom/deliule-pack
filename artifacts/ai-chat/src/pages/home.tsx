@@ -4,7 +4,6 @@ import { ChatMessage } from "@/components/chat-message";
 import { ChatInput } from "@/components/chat-input";
 import { useChat } from "@/hooks/use-chat";
 import { useListOpenaiMessages } from "@workspace/api-client-react";
-import { Sparkles } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Home() {
@@ -34,13 +33,16 @@ export default function Home() {
         {!activeId && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-8 text-center animate-in fade-in duration-700">
             <div className="w-20 h-20 mb-6 rounded-3xl bg-gradient-premium flex items-center justify-center shadow-xl shadow-primary/20">
-              <Sparkles className="w-10 h-10 text-white" />
+              <span className="text-white font-bold text-3xl tracking-tight">Dl</span>
             </div>
-            <h1 className="text-4xl font-bold mb-4 tracking-tight text-gradient-premium">
-              How can I help you today?
+            <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient-premium">
+              Deliule
             </h1>
-            <p className="text-muted-foreground max-w-md text-lg">
-              Start typing below to begin a new conversation in your personal workspace.
+            <p className="text-muted-foreground max-w-md text-lg mb-2">
+              How can I help you today?
+            </p>
+            <p className="text-muted-foreground/60 max-w-md text-sm">
+              Start typing below to begin a new conversation.
             </p>
           </div>
         )}

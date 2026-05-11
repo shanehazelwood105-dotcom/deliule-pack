@@ -26,7 +26,13 @@ export function ChatSidebar({ activeId, onSelect }: ChatSidebarProps) {
 
   return (
     <div className="w-72 border-r border-border bg-sidebar flex flex-col h-full">
-      <div className="p-4">
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-3 px-1 pb-1">
+          <div className="w-9 h-9 rounded-xl bg-gradient-premium flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+            <span className="text-white font-bold text-sm tracking-tight">Dl</span>
+          </div>
+          <span className="text-gradient-premium font-bold text-lg tracking-tight">Deliule</span>
+        </div>
         <Button 
           onClick={() => onSelect(null)} 
           className="w-full justify-start gap-2 bg-gradient-premium border-none text-white hover:opacity-90 transition-opacity"
