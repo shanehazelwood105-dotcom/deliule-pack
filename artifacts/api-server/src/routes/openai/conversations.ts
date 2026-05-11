@@ -147,10 +147,16 @@ router.post("/conversations/:id/messages", async (req, res) => {
       .where(eq(messages.conversationId, params.data.id))
       .orderBy(messages.createdAt);
 
-    const chatMessages = history.map((m) => ({
-      role: m.role as "user" | "assistant",
-      content: m.content,
-    }));
+    const chatMessages = [
+      {
+        role: "system" as const,
+        content: "You are a helpful, friendly assistant. Keep your replies short and conversational — like texting a smart friend. Avoid bullet points, long explanations, or formal language unless the user specifically asks for detail. Match the user's tone and energy. Get to the point.",
+      },
+      ...history.map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      })),
+    ];
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -159,7 +165,7 @@ router.post("/conversations/:id/messages", async (req, res) => {
     let fullResponse = "";
     const stream = await openai.chat.completions.create({
       model: "gpt-5.4",
-      max_completion_tokens: 8192,
+      max_completion_tokens: 512,
       messages: chatMessages,
       stream: true,
     });
