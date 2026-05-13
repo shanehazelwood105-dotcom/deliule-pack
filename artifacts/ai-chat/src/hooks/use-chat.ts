@@ -10,18 +10,21 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
   const [streamingMessage, setStreamingMessage] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const queryClient = useQueryClient();
 
   const createConv = useCreateOpenaiConversation();
 
+  const ensureConversation = useCallback(async (title: string) => {
+    if (conversationId) return conversationId;
+    const newConv = await createConv.mutateAsync({ data: { title: title.slice(0, 40) + (title.length > 40 ? "..." : "") } });
+    onConversationCreated(newConv.id);
+    queryClient.invalidateQueries({ queryKey: getListOpenaiConversationsQueryKey() });
+    return newConv.id;
+  }, [conversationId, createConv, onConversationCreated, queryClient]);
+
   const sendMessage = useCallback(async (content: string) => {
-    let targetId = conversationId;
-    if (!targetId) {
-      const newConv = await createConv.mutateAsync({ data: { title: content.slice(0, 40) + (content.length > 40 ? "..." : "") } });
-      targetId = newConv.id;
-      onConversationCreated(targetId);
-      queryClient.invalidateQueries({ queryKey: getListOpenaiConversationsQueryKey() });
-    }
+    const targetId = await ensureConversation(content);
 
     const tempUserMessage = {
       id: Date.now(),
@@ -31,9 +34,9 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
       createdAt: new Date().toISOString()
     };
 
-    queryClient.setQueryData(getListOpenaiMessagesQueryKey(targetId), (old: any) => {
-      if (!old) return [tempUserMessage];
-      return [...old, tempUserMessage];
+    queryClient.setQueryData(getListOpenaiMessagesQueryKey(targetId), (old: unknown) => {
+      const arr = Array.isArray(old) ? old : [];
+      return [...arr, tempUserMessage];
     });
 
     setIsTyping(true);
@@ -69,10 +72,8 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
                 fullResponse += data.content;
                 setStreamingMessage(fullResponse);
               }
-              if (data.done) {
-                break;
-              }
-            } catch (e) {
+              if (data.done) break;
+            } catch {
               // ignore parse errors for partial chunks
             }
           }
@@ -82,12 +83,45 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
       queryClient.invalidateQueries({ queryKey: getListOpenaiMessagesQueryKey(targetId) });
       setIsStreaming(false);
       setStreamingMessage("");
-    } catch (e) {
-      console.error(e);
+    } catch {
       setIsTyping(false);
       setIsStreaming(false);
     }
-  }, [conversationId, createConv, queryClient, onConversationCreated]);
+  }, [ensureConversation, queryClient]);
 
-  return { sendMessage, isStreaming, isTyping, streamingMessage };
+  const generateImage = useCallback(async (prompt: string) => {
+    const targetId = await ensureConversation(`Image: ${prompt}`);
+
+    setIsGeneratingImage(true);
+
+    const tempUserMessage = {
+      id: Date.now(),
+      conversationId: targetId,
+      role: "user",
+      content: `Generate an image: ${prompt}`,
+      createdAt: new Date().toISOString()
+    };
+    queryClient.setQueryData(getListOpenaiMessagesQueryKey(targetId), (old: unknown) => {
+      const arr = Array.isArray(old) ? old : [];
+      return [...arr, tempUserMessage];
+    });
+
+    try {
+      const response = await fetch(`/api/openai/conversations/${targetId}/generate-image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) throw new Error("Image generation failed");
+
+      queryClient.invalidateQueries({ queryKey: getListOpenaiMessagesQueryKey(targetId) });
+    } catch {
+      // silently fail, user will see no image
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }, [ensureConversation, queryClient]);
+
+  return { sendMessage, generateImage, isStreaming, isTyping, isGeneratingImage, streamingMessage };
 }

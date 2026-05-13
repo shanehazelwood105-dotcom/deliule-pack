@@ -2,6 +2,7 @@ import { Router } from "express";
 import { eq } from "drizzle-orm";
 import { db, conversations, messages } from "@workspace/db";
 import { openai } from "@workspace/integrations-openai-ai-server";
+import { generateImageBuffer } from "@workspace/integrations-openai-ai-server/image";
 import {
   CreateOpenaiConversationBody,
   SendOpenaiMessageBody,
@@ -194,6 +195,50 @@ router.post("/conversations/:id/messages", async (req, res) => {
       res.write(`data: ${JSON.stringify({ error: "Stream error" })}\n\n`);
       res.end();
     }
+  }
+});
+
+router.post("/conversations/:id/generate-image", async (req, res) => {
+  const params = GetOpenaiConversationParams.safeParse({ id: Number(req.params.id) });
+  if (!params.success) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  const prompt = typeof req.body?.prompt === "string" ? req.body.prompt.trim() : "";
+  if (!prompt) {
+    res.status(400).json({ error: "prompt is required" });
+    return;
+  }
+
+  try {
+    const [conv] = await db
+      .select()
+      .from(conversations)
+      .where(eq(conversations.id, params.data.id));
+    if (!conv) {
+      res.status(404).json({ error: "Conversation not found" });
+      return;
+    }
+
+    await db.insert(messages).values({
+      conversationId: params.data.id,
+      role: "user",
+      content: `Generate an image: ${prompt}`,
+    });
+
+    const buffer = await generateImageBuffer(prompt, "1024x1024");
+    const base64 = `data:image/png;base64,${buffer.toString("base64")}`;
+
+    const [saved] = await db.insert(messages).values({
+      conversationId: params.data.id,
+      role: "assistant",
+      content: base64,
+    }).returning();
+
+    res.json({ messageId: saved.id, imageData: base64 });
+  } catch (err) {
+    req.log.error({ err }, "Failed to generate image");
+    res.status(500).json({ error: "Image generation failed" });
   }
 });
 

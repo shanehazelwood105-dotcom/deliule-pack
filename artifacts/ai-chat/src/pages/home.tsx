@@ -9,11 +9,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function Home() {
   const [activeId, setActiveId] = useState<number | null>(null);
   
-  const { data: messages } = useListOpenaiMessages(activeId as number, {
+  const { data: messages } = useListOpenaiMessages(activeId ?? 0, {
     query: { enabled: !!activeId }
   });
   
-  const { sendMessage, isStreaming, isTyping, streamingMessage } = useChat(activeId, setActiveId);
+  const { sendMessage, generateImage, isStreaming, isTyping, isGeneratingImage, streamingMessage } = useChat(activeId, setActiveId);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function Home() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-background via-background to-transparent pt-12">
-          <ChatInput onSend={sendMessage} disabled={isTyping} />
+          <ChatInput onSend={sendMessage} onGenerateImage={generateImage} disabled={isTyping} isGeneratingImage={isGeneratingImage} />
         </div>
       </div>
     </div>

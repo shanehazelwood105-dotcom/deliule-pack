@@ -1,0 +1,141 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "InterVar",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#0A1727",
+    "secondary": "#CBD5E1",
+    "accent": "#0A1727",
+    "background": "#FFFFFF",
+    "textPrimary": "#292D32",
+    "link": "#1E293B"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "InterVar",
+      "heading": "InterVar"
+    },
+    "fontStacks": {
+      "heading": [
+        "InterVar",
+        "sans-serif"
+      ],
+      "body": [
+        "InterVar",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "InterVar",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "72px",
+      "h2": "24px",
+      "body": "14px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "6px"
+  },
+  "components": {
+    "input": {
+      "background": "#FFFFFF",
+      "textColor": "#0A1727",
+      "borderColor": null,
+      "borderRadius": "0px",
+      "borderRadiusCorners": {
+        "topLeft": "0px",
+        "topRight": "0px",
+        "bottomRight": "0px",
+        "bottomLeft": "0px"
+      },
+      "shadow": "none"
+    },
+    "buttonPrimary": {
+      "background": "#0A1727",
+      "textColor": "#FFFFFF",
+      "borderRadius": "0px",
+      "borderRadiusCorners": {
+        "topLeft": "0px",
+        "topRight": "0px",
+        "bottomRight": "0px",
+        "bottomLeft": "0px"
+      },
+      "shadow": "none"
+    },
+    "buttonSecondary": {
+      "background": "transparent",
+      "textColor": "#000000",
+      "borderColor": "#E2E8F0",
+      "borderRadius": "8px",
+      "borderRadiusCorners": {
+        "topLeft": "8px",
+        "topRight": "8px",
+        "bottomRight": "8px",
+        "bottomLeft": "8px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": "https://meta.magicstudio.com/assets/studio-logo.svg",
+    "favicon": "File saved at: attached_assets/favicon.png",
+    "ogImage": "https://meta.magicstudio.com/assets/ai-art-generator-og.webp",
+    "logoAlt": "Magic Studio"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Selected #0 because it is visible, located in the header, and matches the brand name 'Magic Studio' with a source URL indicating it is the main logo.",
+    "confidence": 0.95,
+    "source": "llm"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 4,
+      "text": "Generate professional headshots with AI",
+      "reasoning": "Button #5 ('Generate professional headshots with AI') is likely the primary CTA due to its action-oriented text and prominence in the list of features, encouraging users to engage with the main service offered."
+    },
+    "secondary": {
+      "index": 17,
+      "text": "Download",
+      "reasoning": "Button #0 ('Download') is selected as secondary due to its transparent background, making it visually distinct from the primary button, and its supportive action of downloading content."
+    },
+    "confidence": 0.9
+  },
+  "personality": {
+    "tone": "modern",
+    "energy": "medium",
+    "targetAudience": "creative professionals and hobbyists interested in AI-generated art"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.9,
+    "colors": 0.9,
+    "overall": 0.9
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": 0,
+        "selectedLogoReasoning": "Selected #0 because it is visible, located in the header, and matches the brand name 'Magic Studio' with a source URL indicating it is the main logo.",
+        "confidence": 0.95
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
