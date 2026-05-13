@@ -256,7 +256,7 @@ router.post("/conversations/:id/generate-image", async (req, res) => {
       content: `Generate an image: ${prompt}`,
     });
 
-    const buffer = await generateImageBuffer(prompt, "512x512", "low");
+    const buffer = await generateImageBuffer(prompt, "1024x1024", "low");
     const base64 = `data:image/png;base64,${buffer.toString("base64")}`;
 
     const [saved] = await db.insert(messages).values({

@@ -21,7 +21,7 @@ export const openai = new OpenAI({
 
 export async function generateImageBuffer(
   prompt: string,
-  size: "1024x1024" | "512x512" | "256x256" = "512x512",
+  size: "1024x1024" | "1024x1536" | "1536x1024" | "auto" = "1024x1024",
   quality: "low" | "medium" | "high" | "auto" = "low"
 ): Promise<Buffer> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
