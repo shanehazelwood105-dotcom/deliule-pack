@@ -148,34 +148,64 @@ router.post("/conversations/:id/messages", async (req, res) => {
       .where(eq(messages.conversationId, params.data.id))
       .orderBy(messages.createdAt);
 
-    const chatMessages = [
-      {
-        role: "system" as const,
-        content: "You are a helpful, friendly assistant. Keep your replies short and conversational — like texting a smart friend. Avoid bullet points, long explanations, or formal language unless the user specifically asks for detail. Match the user's tone and energy. Get to the point.",
-      },
-      ...history.map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      })),
-    ];
+    const mode = typeof req.body?.mode === "string" ? req.body.mode : "chat";
+    const isCodeMode = mode === "code";
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
     let fullResponse = "";
-    const stream = await openai.chat.completions.create({
-      model: "gpt-5.4",
-      max_completion_tokens: 512,
-      messages: chatMessages,
-      stream: true,
-    });
 
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content;
-      if (content) {
-        fullResponse += content;
-        res.write(`data: ${JSON.stringify({ content })}\n\n`);
+    if (isCodeMode) {
+      const inputMessages = [
+        {
+          role: "system" as const,
+          content: "You are an expert software engineer powered by Codex. Write clean, well-commented code. When providing code, always wrap it in appropriate markdown code blocks with the language specified. Be concise but complete.",
+        },
+        ...history.map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+      ];
+
+      const stream = await openai.responses.create({
+        model: "gpt-5.3-codex",
+        input: inputMessages,
+        stream: true,
+      } as Parameters<typeof openai.responses.create>[0]);
+
+      for await (const event of stream as AsyncIterable<{ type: string; delta?: string }>) {
+        if (event.type === "response.output_text.delta" && event.delta) {
+          fullResponse += event.delta;
+          res.write(`data: ${JSON.stringify({ content: event.delta })}\n\n`);
+        }
+      }
+    } else {
+      const chatMessages = [
+        {
+          role: "system" as const,
+          content: "You are a helpful, friendly assistant. Keep your replies short and conversational — like texting a smart friend. Avoid bullet points, long explanations, or formal language unless the user specifically asks for detail. Match the user's tone and energy. Get to the point.",
+        },
+        ...history.map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+      ];
+
+      const stream = await openai.chat.completions.create({
+        model: "gpt-5.4",
+        max_completion_tokens: 512,
+        messages: chatMessages,
+        stream: true,
+      });
+
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) {
+          fullResponse += content;
+          res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        }
       }
     }
 

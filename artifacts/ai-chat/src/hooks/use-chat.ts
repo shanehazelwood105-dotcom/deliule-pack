@@ -23,7 +23,7 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
     return newConv.id;
   }, [conversationId, createConv, onConversationCreated, queryClient]);
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, mode: "chat" | "code" = "chat") => {
     const targetId = await ensureConversation(content);
 
     const tempUserMessage = {
@@ -46,7 +46,7 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
       const response = await fetch(`/api/openai/conversations/${targetId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, mode }),
       });
 
       setIsTyping(false);

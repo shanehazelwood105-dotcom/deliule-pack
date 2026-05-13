@@ -84,7 +84,7 @@ export default function Home() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-background via-background to-transparent pt-12">
-          <ChatInput onSend={sendMessage} onGenerateImage={generateImage} disabled={isTyping} isGeneratingImage={isGeneratingImage} />
+          <ChatInput onSend={(msg, mode) => sendMessage(msg, mode)} onGenerateImage={generateImage} disabled={isTyping} isGeneratingImage={isGeneratingImage} />
         </div>
       </div>
     </div>
