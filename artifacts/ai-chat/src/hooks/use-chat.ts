@@ -23,8 +23,16 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
     return newConv.id;
   }, [conversationId, createConv, onConversationCreated, queryClient]);
 
-  const sendMessage = useCallback(async (content: string, mode: "chat" | "code" = "chat") => {
-    const targetId = await ensureConversation(content);
+  const sendMessage = useCallback(async (content: string, mode: "chat" | "code" = "chat", file?: { name: string; type: "image" | "text"; content: string }) => {
+    let fullContent = content;
+    if (file?.type === "text") {
+      const ext = file.name.split(".").pop() ?? "";
+      const fileBlock = `\`\`\`${ext}\n// ${file.name}\n${file.content}\n\`\`\``;
+      fullContent = content ? `${fileBlock}\n\n${content}` : fileBlock;
+    } else if (file?.type === "image") {
+      fullContent = content ? `[Attached image: ${file.name}]\n${content}` : `[Attached image: ${file.name}]`;
+    }
+    const targetId = await ensureConversation(fullContent);
 
     const tempUserMessage = {
       id: Date.now(),
