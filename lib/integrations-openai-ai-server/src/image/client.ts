@@ -21,14 +21,17 @@ export const openai = new OpenAI({
 
 export async function generateImageBuffer(
   prompt: string,
-  size: "1024x1024" | "512x512" | "256x256" = "1024x1024"
+  size: "1024x1024" | "512x512" | "256x256" = "512x512",
+  quality: "low" | "medium" | "high" | "auto" = "low"
 ): Promise<Buffer> {
-  const response = await openai.images.generate({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const response = await (openai.images.generate as any)({
     model: "gpt-image-1",
     prompt,
     size,
+    quality,
   });
-  const base64 = response.data?.[0]?.b64_json ?? "";
+  const base64 = (response.data?.[0]?.b64_json ?? "") as string;
   return Buffer.from(base64, "base64");
 }
 
