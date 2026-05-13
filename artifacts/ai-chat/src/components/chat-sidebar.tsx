@@ -15,7 +15,8 @@ interface ChatSidebarProps {
 }
 
 export function ChatSidebar({ activeId, onSelect }: ChatSidebarProps) {
-  const { data: conversations, isLoading } = useListOpenaiConversations();
+  const { data: rawConversations, isLoading } = useListOpenaiConversations();
+  const conversations = Array.isArray(rawConversations) ? rawConversations : [];
   const deleteConv = useDeleteOpenaiConversation();
   const queryClient = useQueryClient();
   const { user, isLoaded } = useUser();
