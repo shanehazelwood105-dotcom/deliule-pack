@@ -11,10 +11,12 @@ import Home from "@/pages/home";
 
 const queryClient = new QueryClient();
 
-const clerkPubKey = publishableKeyFromHost(
-  window.location.hostname,
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-);
+// In dev, VITE_CLERK_PROXY_URL is empty — use the key directly so Clerk
+// doesn't try to derive a Frontend API URL from the Replit dev subdomain.
+// In production, the proxy is active and publishableKeyFromHost resolves correctly.
+const clerkPubKey = import.meta.env.VITE_CLERK_PROXY_URL
+  ? publishableKeyFromHost(window.location.hostname, import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
+  : import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
