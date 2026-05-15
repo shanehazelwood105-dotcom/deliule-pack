@@ -43,7 +43,6 @@ export function ChatSidebar({ activeId, onSelect }: ChatSidebarProps) {
           New Chat
         </Button>
       </div>
-
       <ScrollArea className="flex-1 px-3">
         <div className="space-y-2 pb-4">
           {isLoading && (
@@ -78,13 +77,12 @@ export function ChatSidebar({ activeId, onSelect }: ChatSidebarProps) {
           ))}
         </div>
       </ScrollArea>
-
       <div className="p-4 border-t border-border space-y-3">
         <div className="flex items-center gap-3 px-1">
           <div className="w-9 h-9 rounded-xl bg-gradient-premium flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
             <span className="text-white font-bold text-sm tracking-tight">Dl</span>
           </div>
-          <span className="text-gradient-premium font-bold text-lg tracking-tight">Deliule</span>
+          <span className="text-gradient-premium font-bold text-lg tracking-tight border-t-[#000000] border-r-[#000000] border-b-[#000000] border-l-[#000000] border-t-[1px] border-r-[1px] border-b-[1px] border-l-[1px]">Deliule</span>
         </div>
 
         {isLoaded && user ? (
