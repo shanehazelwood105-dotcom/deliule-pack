@@ -82,7 +82,7 @@ export function ChatSidebar({ activeId, onSelect }: ChatSidebarProps) {
           <div className="w-9 h-9 rounded-xl bg-gradient-premium flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
             <span className="text-white font-bold text-sm tracking-tight">Dl</span>
           </div>
-          <span className="text-gradient-premium font-bold text-lg tracking-tight border-t-[#000000] border-r-[#000000] border-b-[#000000] border-l-[#000000] border-t-[1px] border-r-[1px] border-b-[1px] border-l-[1px]">Deliule</span>
+          <span className="text-gradient-premium text-lg tracking-tight font-normal">Deliule</span>
         </div>
 
         {isLoaded && user ? (
