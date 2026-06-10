@@ -149,7 +149,6 @@ router.post("/conversations/:id/messages", async (req, res) => {
       .orderBy(messages.createdAt);
 
     const mode = typeof req.body?.mode === "string" ? req.body.mode : "chat";
-    const isCodeMode = mode === "code";
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -157,7 +156,70 @@ router.post("/conversations/:id/messages", async (req, res) => {
 
     let fullResponse = "";
 
-    if (isCodeMode) {
+    const systemPrompts: Record<string, string> = {
+      chat: "You are a helpful, friendly assistant. Keep your replies short and conversational — like texting a smart friend. Avoid bullet points, long explanations, or formal language unless the user specifically asks for detail. Match the user's tone and energy. Get to the point.",
+      music: `You are a music composition AI. Generate Web Audio API JavaScript that plays the requested music directly in the browser.
+
+Output a single \`\`\`webaudio code block containing ONLY JavaScript with this exact structure:
+\`\`\`webaudio
+function startMusic(audioCtx) {
+  // your Web Audio API code here — use oscillators, gainNodes, filters, etc.
+  // set up scheduling with audioCtx.currentTime
+  // return a stop function
+  return function stop() {
+    // clean up all nodes
+  };
+}
+\`\`\`
+
+Rules:
+- Do NOT auto-play. Only define the startMusic function.
+- Use audioCtx.currentTime for all scheduling
+- Be creative: use multiple oscillators, detuning, envelopes, rhythm
+- Keep it under 150 lines
+- After the code block, add a short 1-sentence description of the piece.`,
+      video: `You are a creative video director AI. Generate a detailed, cinematic video script for the user's request.
+
+Format the script with:
+- **SCENE [N]: [TITLE]** headers
+- Location, lighting, and mood descriptions
+- Camera angles and movements (e.g., "slow dolly in", "wide establishing shot")
+- Dialogue in "SPEAKER: line" format if applicable
+- [ACTION] beats in brackets
+- Duration estimate per scene
+
+Make it vivid, professional, and production-ready.`,
+      "3d": `You are a 3D artist AI. Generate self-contained Three.js code that creates and renders a beautiful 3D scene for the user's request.
+
+Output a single \`\`\`threejs code block with complete HTML including Three.js from CDN:
+\`\`\`threejs
+<!DOCTYPE html>
+<html>
+<head><style>body{margin:0;background:#000;overflow:hidden}</style></head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// Your Three.js scene here
+// Must include: scene, camera, renderer, animation loop
+</script>
+</body>
+</html>
+\`\`\`
+
+Make it visually impressive: add lighting, materials, rotation/animation. Keep code clean and complete.`,
+      project: `You are a senior software architect AI. Generate a complete, production-ready project based on the user's description.
+
+Format your response as:
+1. **Project Overview** — what it does and tech stack
+2. **File Structure** — a tree of all files
+3. For each file, use a fenced code block with the filename as a comment at the top
+
+Be thorough: include config files, entry points, main logic, and a README. Write real, working code — no placeholders.`,
+    };
+
+    const systemContent = systemPrompts[mode] ?? systemPrompts["chat"];
+
+    if (mode === "code") {
       const inputMessages = [
         {
           role: "system" as const,
@@ -183,19 +245,18 @@ router.post("/conversations/:id/messages", async (req, res) => {
       }
     } else {
       const chatMessages = [
-        {
-          role: "system" as const,
-          content: "You are a helpful, friendly assistant. Keep your replies short and conversational — like texting a smart friend. Avoid bullet points, long explanations, or formal language unless the user specifically asks for detail. Match the user's tone and energy. Get to the point.",
-        },
+        { role: "system" as const, content: systemContent },
         ...history.map((m) => ({
           role: m.role as "user" | "assistant",
           content: m.content,
         })),
       ];
 
+      const maxTokens = mode === "project" ? 4096 : mode === "3d" || mode === "music" ? 2048 : 512;
+
       const stream = await openai.chat.completions.create({
         model: "gpt-5.4",
-        max_completion_tokens: 512,
+        max_completion_tokens: maxTokens,
         messages: chatMessages,
         stream: true,
       });

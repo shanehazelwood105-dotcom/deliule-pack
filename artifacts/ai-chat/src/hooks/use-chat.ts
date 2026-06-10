@@ -23,7 +23,7 @@ export function useChat(conversationId: number | null, onConversationCreated: (i
     return newConv.id;
   }, [conversationId, createConv, onConversationCreated, queryClient]);
 
-  const sendMessage = useCallback(async (content: string, mode: "chat" | "code" = "chat", file?: { name: string; type: "image" | "text"; content: string }) => {
+  const sendMessage = useCallback(async (content: string, mode: "chat" | "code" | "music" | "video" | "3d" | "project" = "chat", file?: { name: string; type: "image" | "text"; content: string }) => {
     let fullContent = content;
     if (file?.type === "text") {
       const ext = file.name.split(".").pop() ?? "";
