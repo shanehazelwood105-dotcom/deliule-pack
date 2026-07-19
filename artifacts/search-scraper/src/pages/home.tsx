@@ -39,7 +39,6 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_20%,rgba(139,92,246,0.07)_0%,transparent_60%)] pointer-events-none" />
-
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2 opacity-0 pointer-events-none">
           <span className="text-xl font-semibold text-gradient" style={{ fontFamily: "'Dancing Script', cursive" }}>Search Scraper</span>
@@ -53,7 +52,6 @@ export default function HomePage() {
           </div>
         </div>
       </header>
-
       <main className="flex-1 flex flex-col items-center justify-center px-6 -mt-16">
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
           <div className="text-center">
@@ -62,7 +60,7 @@ export default function HomePage() {
               Search Scraper
             </h1>
             <p className="text-muted-foreground text-sm">
-              Powered by <span className="text-violet-400">Del Scraper</span> · AI-enhanced search
+              Powered by <span className="text-violet-400">Chromium</span> · AI-enhanced search
             </p>
           </div>
 
@@ -115,9 +113,8 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
       <footer className="py-6 text-center text-xs text-muted-foreground/40">
-        Search Scraper · Powered by Del Scraper AI
+        Search Scraper · Powered by Deliule AI
       </footer>
     </div>
   );
