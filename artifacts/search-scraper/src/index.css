@@ -1,0 +1,92 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: 240 10% 4%;
+  --foreground: 240 5% 90%;
+  --card: 240 8% 8%;
+  --card-foreground: 240 5% 88%;
+  --border: 240 5% 15%;
+  --input: 240 5% 18%;
+  --ring: 263 80% 65%;
+  --primary: 263 80% 65%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 70% 60%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 240 5% 16%;
+  --muted-foreground: 240 5% 50%;
+  --accent: 240 5% 12%;
+  --accent-foreground: 240 5% 88%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --app-font-sans: 'Inter', sans-serif;
+  --app-font-mono: Menlo, monospace;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+  }
+  .border-gradient {
+    border-image: linear-gradient(135deg, #a78bfa, #60a5fa) 1;
+  }
+  .search-glow {
+    box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.3), 0 0 30px rgba(167, 139, 250, 0.08);
+  }
+  .search-glow:focus-within {
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.5), 0 0 40px rgba(167, 139, 250, 0.15);
+  }
+  .result-card {
+    @apply bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors cursor-pointer;
+  }
+  .ai-card {
+    background: linear-gradient(135deg, rgba(167,139,250,0.08) 0%, rgba(96,165,250,0.08) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    @apply rounded-xl p-5;
+  }
+}
