@@ -102,13 +102,13 @@ function AnimatedPreview() {
 }
 
 const DEVICE_ICONS: Record<DeviceType, string> = {
-  phone: "📱", tablet: "⬜", desktop: "🖥️", watch: "⌚", tv: "📺", console: "🎮",
+  phone: "📱", tablet: "⬜", desktop: "🖥️", watch: "⌚", tv: "📺", consolex: "🟢", consolep: "🔵",
 };
 
 export default function Landing() {
   const [, setLocation] = useLocation();
   const detected = detectDevice();
-  const autoRedirect = detected === "phone" || detected === "watch" || detected === "tv" || detected === "console";
+  const autoRedirect = detected === "phone" || detected === "watch" || detected === "tv" || detected === "consolex" || detected === "consolep";
 
   useEffect(() => {
     if (autoRedirect) {
@@ -150,7 +150,7 @@ export default function Landing() {
             <span>{DEVICE_LABELS[detected]}</span>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
-            {(["phone", "tablet", "desktop", "watch", "tv", "console"] as DeviceType[]).map(d => (
+            {(["phone", "tablet", "desktop", "watch", "tv", "consolex", "consolep"] as DeviceType[]).map(d => (
               <button key={d} onClick={() => setLocation(getDevicePath(d))} className="text-xs text-white/20 hover:text-white/50 transition-colors">
                 {DEVICE_ICONS[d]}
               </button>

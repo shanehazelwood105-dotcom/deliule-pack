@@ -9,7 +9,8 @@ import PhoneLayout from "@/pages/device/phone";
 import TabletLayout from "@/pages/device/tablet";
 import WatchLayout from "@/pages/device/watch";
 import TvLayout from "@/pages/device/tv";
-import ConsoleLayout from "@/pages/device/console";
+import ConsoleXLayout from "@/pages/device/consolex";
+import ConsolePLayout from "@/pages/device/consolep";
 
 const queryClient = new QueryClient();
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -26,7 +27,8 @@ function App() {
             <Route path="/phone" component={PhoneLayout} />
             <Route path="/watch" component={WatchLayout} />
             <Route path="/tv" component={TvLayout} />
-            <Route path="/console" component={ConsoleLayout} />
+            <Route path="/consolex" component={ConsoleXLayout} />
+            <Route path="/consolep" component={ConsolePLayout} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />
