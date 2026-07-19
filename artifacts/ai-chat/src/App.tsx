@@ -1,7 +1,6 @@
-import { useEffect, useRef } from "react";
-import { ClerkProvider, useClerk } from "@clerk/react";
-import { publishableKeyFromHost } from "@clerk/react/internal";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
+import { useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,78 +10,76 @@ import SignIn from "@/pages/sign-in";
 import SignUp from "@/pages/sign-up";
 
 const queryClient = new QueryClient();
-
-// In dev, VITE_CLERK_PROXY_URL is empty — use the key directly so Clerk
-// doesn't try to derive a Frontend API URL from the Replit dev subdomain.
-// In production, the proxy is active and publishableKeyFromHost resolves correctly.
-const clerkPubKey = import.meta.env.VITE_CLERK_PROXY_URL
-  ? publishableKeyFromHost(window.location.hostname, import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
-  : import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-function stripBase(path: string): string {
-  return basePath && path.startsWith(basePath)
-    ? path.slice(basePath.length) || "/"
-    : path;
-}
-
-function ClerkQueryClientCacheInvalidator() {
-  const { addListener } = useClerk();
+function AuthQueryCacheInvalidator() {
+  const { user } = useAuth0();
   const qc = useQueryClient();
-  const prevUserIdRef = useRef<string | null | undefined>(undefined);
+  const prevIdRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    const unsubscribe = addListener(({ user }) => {
-      const userId = user?.id ?? null;
-      if (prevUserIdRef.current !== undefined && prevUserIdRef.current !== userId) {
-        qc.clear();
-      }
-      prevUserIdRef.current = userId;
-    });
-    return unsubscribe;
-  }, [addListener, qc]);
+    const id = user?.sub;
+    if (prevIdRef.current !== undefined && prevIdRef.current !== id) {
+      qc.clear();
+    }
+    prevIdRef.current = id;
+  }, [user?.sub, qc]);
 
   return null;
 }
 
-function ClerkProviderWithRoutes() {
-  const [, setLocation] = useLocation();
-
+function AppRoutes() {
   return (
-    <ClerkProvider
-      publishableKey={clerkPubKey}
-      proxyUrl={clerkProxyUrl}
-      signInUrl={`${basePath}/sign-in`}
-      signUpUrl={`${basePath}/sign-up`}
-      signInFallbackRedirectUrl={`${basePath}/`}
-      signUpFallbackRedirectUrl={`${basePath}/`}
-      routerPush={(to) => setLocation(stripBase(to))}
-      routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
-    >
-      <QueryClientProvider client={queryClient}>
-        <ClerkQueryClientCacheInvalidator />
-        <TooltipProvider>
-          <Switch>
-            <Route path="/" component={Home} />
-            <Route path="/sign-in/*?" component={SignIn} />
-            <Route path="/sign-up/*?" component={SignUp} />
-            <Route component={NotFound} />
-          </Switch>
-          <Toaster />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ClerkProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthQueryCacheInvalidator />
+      <TooltipProvider>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/sign-in/*?" component={SignIn} />
+          <Route path="/sign-up/*?" component={SignUp} />
+          <Route component={NotFound} />
+        </Switch>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
 function App() {
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+  const redirectUri = window.location.origin + basePath;
+
+  const [, setLocation] = useLocation();
+
+  if (!domain || !clientId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground text-sm">
+        Auth0 not configured — set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID
+      </div>
+    );
+  }
+
+  return (
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={{ redirect_uri: redirectUri }}
+      onRedirectCallback={(appState) => {
+        setLocation(appState?.returnTo ?? "/");
+      }}
+    >
+      <AppRoutes />
+    </Auth0Provider>
+  );
+}
+
+function Root() {
   return (
     <WouterRouter base={basePath}>
-      <ClerkProviderWithRoutes />
+      <App />
     </WouterRouter>
   );
 }
 
-export default App;
+export default Root;
