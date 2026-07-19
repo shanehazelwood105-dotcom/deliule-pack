@@ -132,7 +132,6 @@ export default function Landing() {
         </div>
 
         <div className="w-full max-w-xl px-2">
-          <div className="text-center text-xs text-white/20 mb-3 uppercase tracking-wider">Live Preview</div>
           <AnimatedPreview />
         </div>
 
