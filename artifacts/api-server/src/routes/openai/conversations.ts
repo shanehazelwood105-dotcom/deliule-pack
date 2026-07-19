@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db, conversations, messages } from "@workspace/db";
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { generateImageBuffer } from "@workspace/integrations-openai-ai-server/image";
@@ -15,10 +15,12 @@ import {
 const router = Router();
 
 router.get("/conversations", async (req, res) => {
+  const sid = req.cookies["deliule_sid"] as string | undefined;
   try {
     const all = await db
       .select()
       .from(conversations)
+      .where(sid ? eq(conversations.sessionId, sid) : undefined)
       .orderBy(conversations.createdAt);
     res.json(all);
   } catch (err) {
@@ -33,10 +35,11 @@ router.post("/conversations", async (req, res) => {
     res.status(400).json({ error: "Invalid request body" });
     return;
   }
+  const sid = req.cookies["deliule_sid"] as string | undefined;
   try {
     const [conv] = await db
       .insert(conversations)
-      .values({ title: parsed.data.title })
+      .values({ title: parsed.data.title, sessionId: sid })
       .returning();
     res.status(201).json(conv);
   } catch (err) {
