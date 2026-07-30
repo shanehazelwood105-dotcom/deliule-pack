@@ -29,7 +29,7 @@ export default function HomePage() {
   const handleSearch = () => {
     const q = query.trim();
     if (!q) return;
-    setLocation(`/search?q=${encodeURIComponent(q)}`);
+    setLocation(`/search?q=${encodeURIComponent(q).replace(/%20/g, "+")}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

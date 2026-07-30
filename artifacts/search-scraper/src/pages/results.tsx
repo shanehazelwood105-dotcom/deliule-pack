@@ -93,7 +93,7 @@ export default function ResultsPage() {
     const q = inputVal.trim();
     if (!q) return;
     setQuery(q);
-    setLocation(`/search?q=${encodeURIComponent(q)}`);
+    setLocation(`/search?q=${encodeURIComponent(q).replace(/%20/g, "+")}`);
     doSearch(q);
   };
 
@@ -221,7 +221,7 @@ export default function ResultsPage() {
               {["What is machine learning?", "How to start a business?", "Best Python libraries 2025"].map(s => (
                 <button
                   key={s}
-                  onClick={() => { setInputVal(s); setQuery(s); setLocation(`/search?q=${encodeURIComponent(s)}`); doSearch(s); }}
+                  onClick={() => { setInputVal(s); setQuery(s); setLocation(`/search?q=${encodeURIComponent(s).replace(/%20/g, "+")}`); doSearch(s); }}
                   className="w-full text-left text-xs text-muted-foreground hover:text-foreground py-1.5 border-b border-border last:border-0 transition-colors"
                 >
                   {s}
