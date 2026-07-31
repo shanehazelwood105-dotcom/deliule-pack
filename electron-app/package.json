@@ -5,6 +5,10 @@
   "main": "main.js",
   "author": "Deliule",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanehazelwood105-dotcom/search-scraper.git"
+  },
   "scripts": {
     "start": "electron .",
     "build:win": "electron-builder --win",
