@@ -23,23 +23,17 @@
           "target": "nsis",
           "arch": ["x64"]
         }
-      ],
-      "icon": "icon.png"
+      ]
     },
     "mac": {
-      "target": "dmg",
-      "icon": "icon.png"
+      "target": "dmg"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "icon.png"
+      "target": "AppImage"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "icon.png",
-      "uninstallerIcon": "icon.png",
-      "installerHeaderIcon": "icon.png",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     }
