@@ -1,0 +1,49 @@
+{
+  "name": "deliule",
+  "version": "1.0.0",
+  "description": "Deliule AI desktop app",
+  "main": "main.js",
+  "author": "Deliule",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanehazelwood105-dotcom/deliule-pack.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win --publish never",
+    "build:mac": "electron-builder --mac --publish never",
+    "build:linux": "electron-builder --linux --publish never"
+  },
+  "build": {
+    "appId": "com.deliule.app",
+    "productName": "Deliule",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}
