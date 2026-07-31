@@ -50,6 +50,19 @@ export default function HomePage() {
             <Zap className="w-3 h-3 text-violet-400" />
             <span className="text-xs">Del Scraper AI</span>
           </div>
+          <a
+            href="https://ai-chat-theme--shanehazelwood1.replit.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Visit Deliule"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:border-violet-500/40 hover:bg-white/10 transition-all"
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}favicon.svg`}
+              alt="Deliule"
+              className="w-5 h-5 object-contain"
+            />
+          </a>
         </div>
       </header>
       <main className="flex-1 flex flex-col items-center justify-center px-6 -mt-16">
